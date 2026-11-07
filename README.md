@@ -82,6 +82,6 @@ Results will be added to the `results/` folder and summarized in the course pape
 
 ## Author
 
-Your Name, faculty number XXXXX
+Viktoria Nacheva
 
 University of Plovdiv "Paisii Hilendarski"
