@@ -82,6 +82,6 @@ Results will be added to the `results/` folder and summarized in the course pape
 
 ## Author
 
-Viktoria Nacheva
+Viktoria Nacheva, faculty number: 2601321052
 
 University of Plovdiv "Paisii Hilendarski"
