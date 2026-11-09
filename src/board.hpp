@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+using namespace std;
 
 enum class Cell : char { Empty = ' ', X = 'X', O = 'O' };
 enum class Result { Ongoing, XWins, OWins, Draw };
@@ -29,8 +30,8 @@ public:
 
     void undo(int idx) { cells_[idx] = Cell::Empty; }
 
-    std::vector<int> legalMoves() const {
-        std::vector<int> moves;
+    vector<int> legalMoves() const {
+        vector<int> moves;
         for (int i = 0; i < n_ * n_; ++i)
             if (cells_[i] == Cell::Empty) moves.push_back(i);
         return moves;
@@ -59,26 +60,26 @@ public:
     }
 
     void print() const {
-        std::cout << "\n   ";
-        for (int c = 0; c < n_; ++c) std::cout << ' ' << c + 1 << "  ";
-        std::cout << '\n';
+        cout << "\n   ";
+        for (int c = 0; c < n_; ++c) cout << ' ' << c + 1 << "  ";
+        cout << '\n';
         for (int r = 0; r < n_; ++r) {
-            std::cout << ' ' << r + 1 << ' ';
+            cout << ' ' << r + 1 << ' ';
             for (int c = 0; c < n_; ++c) {
-                std::cout << ' ' << static_cast<char>(at(r, c));
-                if (c < n_ - 1) std::cout << " |";
+                cout << ' ' << static_cast<char>(at(r, c));
+                if (c < n_ - 1) cout << " |";
             }
-            std::cout << '\n';
+            cout << '\n';
             if (r < n_ - 1) {
-                std::cout << "   ";
-                for (int c = 0; c < n_; ++c) std::cout << "---" << (c < n_ - 1 ? "+" : "");
-                std::cout << '\n';
+                cout << "   ";
+                for (int c = 0; c < n_; ++c) cout << "---" << (c < n_ - 1 ? "+" : "");
+                cout << '\n';
             }
         }
-        std::cout << '\n';
+        cout << '\n';
     }
 
 private:
     int n_, k_;
-    std::vector<Cell> cells_;
+    vector<Cell> cells_;
 };
