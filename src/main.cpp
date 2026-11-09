@@ -9,14 +9,15 @@ unique_ptr<Player> makePlayer(int choice) {
         case 1:  return make_unique<HumanPlayer>();
         case 2:  return make_unique<RandomPlayer>();
         case 3:  return make_unique<HeuristicPlayer>();
-        default: return make_unique<MinimaxPlayer>();
+        case 4:  return make_unique<MinimaxPlayer>();
+        default: return make_unique<AlphaBetaPlayer>();
     }
 }
 
 int askPlayerType(char symbol) {
     int choice = 0;
-    while (choice < 1 || choice > 4) {
-        cout << "Player " << symbol << ":  1) Human  2) Random  3) Heuristic  4) Minimax  > ";
+    while (choice < 1 || choice > 5) {
+        cout << "Player " << symbol << ":  1) Human  2) Random  3) Heuristic  4) Minimax  5) AlphaBeta  > ";
         if (!(cin >> choice)) exit(0);
     }
     return choice;
@@ -37,8 +38,8 @@ int main() {
         if (p.name() != "Human")
             cout << p.name() << " (" << static_cast<char>(current) << ") plays row "
                  << idx / board.size() + 1 << ", column " << idx % board.size() + 1 << "\n";
-        if (auto* mm = dynamic_cast<MinimaxPlayer*>(&p))
-            cout << "Nodes explored: " << mm->nodes() << "\n";
+        if (p.nodes() >= 0)
+            cout << "Nodes explored: " << p.nodes() << "\n";
         current = opponent(current);
     }
 

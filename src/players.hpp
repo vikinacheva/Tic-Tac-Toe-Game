@@ -12,6 +12,7 @@ public:
     virtual ~Player() = default;
     virtual int chooseMove(Board& board, Cell me) = 0;
     virtual string name() const = 0;
+    virtual long long nodes() const { return -1; }  
 };
 
 inline Result winFor(Cell c) { return c == Cell::X ? Result::XWins : Result::OWins; }
@@ -114,7 +115,7 @@ public:
     }
 
     string name() const override { return "Minimax"; }
-    long long nodes() const { return nodes_; }   
+    long long nodes() const override { return nodes_; }   
 
 private:
     static constexpr int INF = 1000000;
@@ -138,6 +139,76 @@ private:
             best = maximizing ? max(best, score) : min(best, score);
         }
         return best;
+    }
+
+    mt19937 rng_;
+    long long nodes_ = 0;
+};
+
+class AlphaBetaPlayer : public Player {
+public:
+    explicit AlphaBetaPlayer(unsigned seed = random_device{}()) : rng_(seed) {}
+
+    int chooseMove(Board& board, Cell me) override {
+        nodes_ = 0;
+        int bestScore = -INF;
+        vector<int> bestMoves;
+
+        for (int m : board.legalMoves()) {
+            board.place(m, me);
+            int score = alphabeta(board, opponent(me), me, 1, bestScore - 1, INF);
+            board.undo(m);
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestMoves = {m};
+            } else if (score == bestScore) {
+                bestMoves.push_back(m);
+            }
+        }
+
+        uniform_int_distribution<size_t> pick(0, bestMoves.size() - 1);
+        return bestMoves[pick(rng_)];
+    }
+
+    string name() const override { return "AlphaBeta"; }
+    long long nodes() const override { return nodes_; }
+
+private:
+    static constexpr int INF = 1000000;
+    static constexpr int WIN = 1000;
+
+    int alphabeta(Board& board, Cell turn, Cell me, int depth, int alpha, int beta) {
+        ++nodes_;
+
+        Result r = board.result();
+        if (r == winFor(me)) return WIN - depth;
+        if (r == winFor(opponent(me))) return depth - WIN;
+        if (r == Result::Draw) return 0;
+
+        if (turn == me) {                          
+            int best = -INF;
+            for (int m : board.legalMoves()) {
+                board.place(m, turn);
+                int score = alphabeta(board, opponent(turn), me, depth + 1, alpha, beta);
+                board.undo(m);
+                best = max(best, score);
+                alpha = max(alpha, best);
+                if (alpha >= beta) break;         
+            }
+            return best;
+        } else {                                   
+            int best = INF;
+            for (int m : board.legalMoves()) {
+                board.place(m, turn);
+                int score = alphabeta(board, opponent(turn), me, depth + 1, alpha, beta);
+                board.undo(m);
+                best = min(best, score);
+                beta = min(beta, best);
+                if (alpha >= beta) break;          
+            }
+            return best;
+        }
     }
 
     mt19937 rng_;
