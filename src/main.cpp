@@ -4,14 +4,23 @@
 #include "players.hpp"
 using namespace std;
 
-unique_ptr<Player> makePlayer(int choice) {
+unique_ptr<Player> makePlayer(int choice, int depth) {
     switch (choice) {
         case 1:  return make_unique<HumanPlayer>();
         case 2:  return make_unique<RandomPlayer>();
         case 3:  return make_unique<HeuristicPlayer>();
-        case 4:  return make_unique<MinimaxPlayer>();
-        default: return make_unique<AlphaBetaPlayer>();
+        case 4:  return make_unique<MinimaxPlayer>(depth);
+        default: return make_unique<AlphaBetaPlayer>(depth);
     }
+}
+
+int askNumber(const string& prompt, int low, int high) {
+    int value = 0;
+    while (value < low || value > high) {
+        cout << prompt << " (" << low << "-" << high << "): ";
+        if (!(cin >> value)) exit(0);
+    }
+    return value;
 }
 
 int askPlayerType(char symbol) {
@@ -24,10 +33,15 @@ int askPlayerType(char symbol) {
 }
 
 int main() {
-    auto playerX = makePlayer(askPlayerType('X'));
-    auto playerO = makePlayer(askPlayerType('O'));
+    int size = askNumber("Board size", 3, 6);
+    int winLength = askNumber("Marks in a row to win", 3, size);
+    int depth = 1000;   // 3x3 is searched to the end of the game
+    if (size > 3) depth = askNumber("AI search depth (try 4)", 1, 12);
 
-    Board board;               
+    auto playerX = makePlayer(askPlayerType('X'), depth);
+    auto playerO = makePlayer(askPlayerType('O'), depth);
+
+    Board board(size, winLength);
     Cell current = Cell::X;
 
     while (board.result() == Result::Ongoing) {
