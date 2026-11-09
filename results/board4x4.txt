@@ -1,0 +1,38 @@
+4x4 EXPERIMENT: MINIMAX vs. ALPHA-BETA
+======================================
+
+Settings
+--------
+Board size:            4x4
+Marks in a row to win: 4
+Search depth:          4
+Position:              X (human) played row 2, column 2; O (AI) replied
+Measured:              nodes explored by the AI for its reply
+
+Measured results
+----------------
+Algorithm    Nodes explored    Move chosen
+Minimax      35,715            row 4, column 4
+AlphaBeta    3,556             row 4, column 1
+
+Ratio: alpha-beta explored about 10% of the nodes minimax did
+(roughly 10 times fewer).
+
+Verification of the minimax count
+---------------------------------
+After X's first mark there are 15 free cells. No player can win within
+4 plies, so minimax visits the whole tree down to depth 4:
+
+15 + 15*14 + 15*14*13 + 15*14*13*12
+= 15 + 210 + 2,730 + 32,760
+= 35,715 nodes
+
+This matches the measured value exactly.
+
+Notes
+-----
+- The two algorithms chose different moves (row 4 column 4 vs. row 4
+  column 1). This is expected: several moves have the same score, and
+  both players pick randomly among the equally good ones.
+- Both algorithms use the same evaluation function for positions that
+  are not finished at the depth limit.

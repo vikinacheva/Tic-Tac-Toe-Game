@@ -1,5 +1,5 @@
 Position,Algorithm,Nodes,TimeMs
-empty board, X to move,Minimax,549945,52.3349
-empty board, X to move,AlphaBeta,31620,4.11745
-X in corner, O to move,Minimax,59704,6.05913
-X in corner, O to move,AlphaBeta,4047,0.52135
+empty board, X to move,Minimax,549945,59.6951
+empty board, X to move,AlphaBeta,31620,3.97814
+X in corner, O to move,Minimax,59704,5.84104
+X in corner, O to move,AlphaBeta,4047,0.543329
