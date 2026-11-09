@@ -9,3 +9,7 @@ run: game
 
 clean:
 	rm -f game
+
+experiment: src/experiment.cpp src/board.hpp src/players.hpp
+	$(CXX) $(CXXFLAGS) src/experiment.cpp -o experiment
+	./experiment
