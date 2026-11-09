@@ -38,7 +38,7 @@ public:
     }
 
     Result result() const {
-        const int dr[] = {0, 1, 1, 1};   // right, down, diagonal down-right, diagonal down-left
+        const int dr[] = {0, 1, 1, 1};   
         const int dc[] = {1, 0, 1, -1};
         for (int r = 0; r < n_; ++r) {
             for (int c = 0; c < n_; ++c) {

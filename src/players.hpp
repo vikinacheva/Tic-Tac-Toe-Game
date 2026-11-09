@@ -86,3 +86,60 @@ private:
     }
     mt19937 rng_;
 };
+
+class MinimaxPlayer : public Player {
+public:
+    explicit MinimaxPlayer(unsigned seed = random_device{}()) : rng_(seed) {}
+
+    int chooseMove(Board& board, Cell me) override {
+        nodes_ = 0;
+        int bestScore = -INF;
+        vector<int> bestMoves;
+
+        for (int m : board.legalMoves()) {
+            board.place(m, me);
+            int score = minimax(board, opponent(me), me, 1);
+            board.undo(m);
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestMoves = {m};
+            } else if (score == bestScore) {
+                bestMoves.push_back(m);
+            }
+        }
+
+        uniform_int_distribution<size_t> pick(0, bestMoves.size() - 1);
+        return bestMoves[pick(rng_)];
+    }
+
+    string name() const override { return "Minimax"; }
+    long long nodes() const { return nodes_; }   
+
+private:
+    static constexpr int INF = 1000000;
+    static constexpr int WIN = 1000;
+
+    int minimax(Board& board, Cell turn, Cell me, int depth) {
+        ++nodes_;
+
+        Result r = board.result();
+        if (r == winFor(me)) return WIN - depth;
+        if (r == winFor(opponent(me))) return depth - WIN;
+        if (r == Result::Draw) return 0;
+
+        bool maximizing = (turn == me);
+        int best = maximizing ? -INF : INF;
+
+        for (int m : board.legalMoves()) {
+            board.place(m, turn);
+            int score = minimax(board, opponent(turn), me, depth + 1);
+            board.undo(m);
+            best = maximizing ? max(best, score) : min(best, score);
+        }
+        return best;
+    }
+
+    mt19937 rng_;
+    long long nodes_ = 0;
+};
