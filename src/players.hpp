@@ -8,19 +8,16 @@
 #include "board.hpp"
 using namespace std;
 
-// Every player (human or AI) implements this interface,
-// so the game loop doesn't care who is playing.
 class Player {
 public:
     virtual ~Player() = default;
     virtual int chooseMove(Board& board, Cell me) = 0;
     virtual string name() const = 0;
-    virtual long long nodes() const { return -1; }   // -1 = this player doesn't count nodes
+    virtual long long nodes() const { return -1; } 
 };
 
 inline Result winFor(Cell c) { return c == Cell::X ? Result::XWins : Result::OWins; }
 
-// Try a move, check if it wins, then take it back.
 inline bool isWinningMove(Board& board, int idx, Cell player) {
     board.place(idx, player);
     bool win = board.result() == winFor(player);
@@ -57,7 +54,6 @@ private:
     mt19937 rng_;
 };
 
-// Rules in order: win -> block -> center -> corner -> random.
 class HeuristicPlayer : public Player {
 public:
     explicit HeuristicPlayer(unsigned seed = random_device{}()) : rng_(seed) {}
@@ -65,23 +61,23 @@ public:
     int chooseMove(Board& board, Cell me) override {
         auto moves = board.legalMoves();
 
-        for (int m : moves)                                   // 1. win if possible
+        for (int m : moves)                                   
             if (isWinningMove(board, m, me)) return m;
 
         Cell opp = opponent(me);
-        for (int m : moves)                                   // 2. block the opponent's win
+        for (int m : moves)                                   
             if (isWinningMove(board, m, opp)) return m;
 
         const int n = board.size();
         int center = (n / 2) * n + n / 2;
-        if (board.isValidMove(center)) return center;         // 3. take the center
+        if (board.isValidMove(center)) return center;         
 
-        vector<int> corners;                                  // 4. a random free corner
+        vector<int> corners;                                 
         for (int c : {0, n - 1, n * (n - 1), n * n - 1})
             if (board.isValidMove(c)) corners.push_back(c);
         if (!corners.empty()) return pickRandom(corners);
 
-        return pickRandom(moves);                             // 5. anything else
+        return pickRandom(moves);                           
     }
     string name() const override { return "Heuristic"; }
 
@@ -93,8 +89,6 @@ private:
     mt19937 rng_;
 };
 
-// Scores an unfinished position from the point of view of "me".
-// Every line of K cells that holds only one player's marks counts 10^(number of marks).
 inline int evaluate(const Board& board, Cell me) {
     const int n = board.size(), k = board.winLength();
     const int dr[] = {0, 1, 1, 1};
@@ -130,7 +124,6 @@ inline int evaluate(const Board& board, Cell me) {
     return score;
 }
 
-// Minimax: tries every possible game continuation, down to maxDepth moves.
 class MinimaxPlayer : public Player {
 public:
     explicit MinimaxPlayer(int maxDepth = 1000, unsigned seed = random_device{}())
@@ -191,7 +184,6 @@ private:
     long long nodes_ = 0;
 };
 
-// Minimax with alpha-beta pruning, down to maxDepth moves.
 class AlphaBetaPlayer : public Player {
 public:
     explicit AlphaBetaPlayer(int maxDepth = 1000, unsigned seed = random_device{}())
@@ -204,8 +196,6 @@ public:
 
         for (int m : board.legalMoves()) {
             board.place(m, me);
-            // alpha = bestScore - 1 keeps moves that tie with the best one exact,
-            // so the set of best moves is the same as in plain minimax.
             int score = alphabeta(board, opponent(me), me, 1, bestScore - 1, INF);
             board.undo(m);
 
@@ -237,7 +227,7 @@ private:
         if (r == Result::Draw) return 0;
         if (depth >= maxDepth_) return evaluate(board, me);
 
-        if (turn == me) {                          // maximizing
+        if (turn == me) {                         
             int best = -INF;
             for (int m : board.legalMoves()) {
                 board.place(m, turn);
@@ -245,10 +235,10 @@ private:
                 board.undo(m);
                 best = max(best, score);
                 alpha = max(alpha, best);
-                if (alpha >= beta) break;          // beta cut-off
+                if (alpha >= beta) break;          
             }
             return best;
-        } else {                                   // minimizing
+        } else {                                   
             int best = INF;
             for (int m : board.legalMoves()) {
                 board.place(m, turn);
@@ -256,7 +246,7 @@ private:
                 board.undo(m);
                 best = min(best, score);
                 beta = min(beta, best);
-                if (alpha >= beta) break;          // alpha cut-off
+                if (alpha >= beta) break;          
             }
             return best;
         }
