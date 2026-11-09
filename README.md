@@ -16,8 +16,8 @@ A C++20 console implementation of tic-tac-toe, built as a university course proj
 
 - [x] Board representation, move validation, win/draw detection
 - [x] Human vs. human console game
-- [ ] Random and heuristic players
-- [ ] Minimax player
+- [x] Random and heuristic players
+- [x] Minimax player
 - [ ] Alpha-beta pruning
 - [ ] Human vs. computer and computer vs. computer modes
 - [ ] Experiments (1000 games per pair, node counts, timing)
