@@ -1,0 +1,17 @@
+X,O,XWins,Draws,OWins
+Random,Random,586,147,267
+Random,Heuristic,13,131,856
+Random,Minimax,0,226,774
+Random,AlphaBeta,0,192,808
+Heuristic,Random,958,42,0
+Heuristic,Heuristic,0,1000,0
+Heuristic,Minimax,0,1000,0
+Heuristic,AlphaBeta,0,1000,0
+Minimax,Random,967,33,0
+Minimax,Heuristic,173,827,0
+Minimax,Minimax,0,1000,0
+Minimax,AlphaBeta,0,1000,0
+AlphaBeta,Random,969,31,0
+AlphaBeta,Heuristic,198,802,0
+AlphaBeta,Minimax,0,1000,0
+AlphaBeta,AlphaBeta,0,1000,0
